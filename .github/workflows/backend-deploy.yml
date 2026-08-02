@@ -1,0 +1,72 @@
+name: Backend Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "infra/dynamodb/**"
+      - "infra/lambda/**"
+      - "infra/api-gateway/**"
+      - ".github/workflows/backend-deploy.yml"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: eu-central-1
+  TF_VERSION: "1.14.6"
+  AWS_ROLE_ARN: arn:aws:iam::952083499360:role/resume-cloud-native-github-actions
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements-dev.txt
+
+      - name: Run tests
+        run: python -m pytest backend/visitor_counter/tests/ -v
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Plan & apply infra/dynamodb
+        working-directory: infra/dynamodb
+        run: |
+          terraform init
+          terraform plan -out=tfplan
+          terraform apply tfplan
+
+      - name: Plan & apply infra/lambda
+        working-directory: infra/lambda
+        run: |
+          terraform init
+          terraform plan -out=tfplan
+          terraform apply tfplan
+
+      - name: Plan & apply infra/api-gateway
+        working-directory: infra/api-gateway
+        run: |
+          terraform init
+          terraform plan -out=tfplan
+          terraform apply tfplan
