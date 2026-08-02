@@ -3,9 +3,10 @@ variable "region" {
   default = "eu-central-1"
 }
 
+# No default on purpose — this repo is public. Supply via TF_VAR_account_id
+# or a gitignored terraform.tfvars when applying locally.
 variable "account_id" {
-  type    = string
-  default = "952083499360"
+  type = string
 }
 
 variable "github_repo" {
@@ -32,7 +33,8 @@ variable "site_bucket_name" {
   default = "resume-cloud-native-site"
 }
 
+# No default on purpose — supply via TF_VAR_cloudfront_distribution_id or a
+# gitignored terraform.tfvars when applying locally.
 variable "cloudfront_distribution_id" {
-  type    = string
-  default = "E28M0ZORGBDZ7A"
+  type = string
 }

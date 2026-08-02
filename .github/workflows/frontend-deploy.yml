@@ -13,9 +13,9 @@ permissions:
 
 env:
   AWS_REGION: eu-central-1
-  AWS_ROLE_ARN: arn:aws:iam::952083499360:role/resume-cloud-native-github-actions
+  AWS_ROLE_ARN: ${{ vars.KFRNAM }}
   SITE_BUCKET: resume-cloud-native-site
-  DISTRIBUTION_ID: E28M0ZORGBDZ7A
+  DISTRIBUTION_ID: ${{ vars.KFCFDT }}
 
 jobs:
   deploy:

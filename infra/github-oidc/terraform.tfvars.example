@@ -1,0 +1,5 @@
+# Copy this file to terraform.tfvars (already gitignored via *.tfvars) and
+# fill in the real values before running terraform apply locally.
+
+account_id                 = "123456789012"
+cloudfront_distribution_id = "EXXXXXXXXXXXXX"
