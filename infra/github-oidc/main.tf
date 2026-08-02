@@ -116,3 +116,26 @@ resource "aws_iam_role_policy" "backend_deploy" {
   role   = aws_iam_role.github_actions.id
   policy = data.aws_iam_policy_document.backend_deploy.json
 }
+
+data "aws_iam_policy_document" "frontend_deploy" {
+  statement {
+    sid     = "SiteBucketSync"
+    actions = ["s3:PutObject", "s3:DeleteObject", "s3:ListBucket"]
+    resources = [
+      "arn:aws:s3:::${var.site_bucket_name}",
+      "arn:aws:s3:::${var.site_bucket_name}/*",
+    ]
+  }
+
+  statement {
+    sid       = "CloudFrontInvalidation"
+    actions   = ["cloudfront:CreateInvalidation"]
+    resources = ["arn:aws:cloudfront::${var.account_id}:distribution/${var.cloudfront_distribution_id}"]
+  }
+}
+
+resource "aws_iam_role_policy" "frontend_deploy" {
+  name   = "${var.role_name}-frontend-deploy"
+  role   = aws_iam_role.github_actions.id
+  policy = data.aws_iam_policy_document.frontend_deploy.json
+}
