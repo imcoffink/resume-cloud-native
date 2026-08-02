@@ -26,3 +26,13 @@ variable "role_name" {
   type    = string
   default = "resume-cloud-native-github-actions"
 }
+
+variable "site_bucket_name" {
+  type    = string
+  default = "resume-cloud-native-site"
+}
+
+variable "cloudfront_distribution_id" {
+  type    = string
+  default = "E28M0ZORGBDZ7A"
+}
